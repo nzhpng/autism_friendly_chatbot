@@ -127,7 +127,6 @@ function setupSpeechRecognition() {
 }
 
 const NIM_API_ENDPOINT = "https://autism-friendly-chatbot.onrender.com:3001/api/chat";
-
 async function getAIResponse(userText) {
   const payload = {
     model: "meta/llama-4-maverick-17b-128e-instruct",
@@ -152,7 +151,6 @@ async function getAIResponse(userText) {
     const response = await fetch(NIM_API_ENDPOINT, {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + NIM_API_KEY,
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
