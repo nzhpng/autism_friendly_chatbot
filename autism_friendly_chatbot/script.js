@@ -126,7 +126,7 @@ function setupSpeechRecognition() {
   recognition.start();
 }
 
-const NIM_API_ENDPOINT = "https://autism-friendly-chatbot.onrender.com:3001/api/chat";
+const NIM_API_ENDPOINT = "https://autism-friendly-chatbot.onrender.com/api/chat";
 async function getAIResponse(userText) {
   const payload = {
     model: "meta/llama-4-maverick-17b-128e-instruct",
