@@ -1,0 +1,109 @@
+body {
+  background: #f0f8ff;
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#app {
+  width: 100vw;
+  max-width: 480px;
+  height: 90vh;
+  min-height: 400px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 24px 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+#character-container {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 16px auto;
+  flex-shrink: 0;
+}
+
+#chat-container {
+  width: 100%;
+  flex: 1 1 auto;
+  max-height: 40vh;
+  min-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafb;
+  border-radius: 12px;
+  padding: 8px 4px;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-size: 1.1em;
+  line-height: 1.5;
+  margin-bottom: 4px;
+  word-break: break-word;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.chat-bubble.bot {
+  background: #e0f7fa;
+  align-self: flex-start;
+}
+
+.chat-bubble.user {
+  background: #ffe0b2;
+  align-self: flex-end;
+}
+
+#mic-indicator {
+  width: 40px;
+  height: 40px;
+  background: #b2dfdb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+#mic-indicator::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: #00796b;
+  border-radius: 50%;
+  margin: auto;
+}
+
+#mic-indicator.listening {
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 #b2dfdb; }
+  70% { box-shadow: 0 0 0 10px rgba(178,223,219,0.3); }
+  100% { box-shadow: 0 0 0 0 #b2dfdb; }
+}
+
+/* Input area always at the bottom */
+#app > div[style*="display:flex"] {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+} 
