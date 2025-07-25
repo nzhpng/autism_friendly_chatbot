@@ -126,7 +126,7 @@ function setupSpeechRecognition() {
   recognition.start();
 }
 
-const NIM_API_ENDPOINT = "https://autism-friendly-chatbot.onrender.com/api/chat";
+const NIM_API_ENDPOINT = "https://autism-friendly-chatbot.onrender.com:3001/api/chat";
 
 async function getAIResponse(userText) {
   const payload = {
