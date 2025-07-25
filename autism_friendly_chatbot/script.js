@@ -1,4 +1,4 @@
-// Lottie animation loader (optional)
+// Lottie animation loader 
 function loadLottieAnimation() {
   const container = document.getElementById('character-container');
   if (window.lottie) {
@@ -7,7 +7,7 @@ function loadLottieAnimation() {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      path: 'lottie/character.json', // Place your Lottie file here
+      path: 'lottie/character.json', 
     });
   } else {
     // fallback: simple emoji or static image
@@ -170,7 +170,7 @@ let gameActive = { type: null, state: null };
 const animalList = ['cat', 'dog', 'rabbit', 'elephant', 'lion'];
 
 const imageGameList = [
-  { src: 'assets/images/cat.png', answer: 'cat' },
+  { src: 'assets/images/cat.jpeg', answer: 'cat' },
   { src: 'assets/images/apples.jpeg', answer: 'apple' },
   { src: 'assets/images/car.jpg', answer: 'car' },
   { src: 'assets/images/dog.jpg', answer: 'dog' },
@@ -179,12 +179,26 @@ const imageGameList = [
 
 // Add "I Want Game" items
 const iWantItems = [
-  "apple", "banana", "food", "dog", "cat", "toy", "book", "cookie", "ball"
+  "an apple", "a banana", "food", "water", "a toy", "a book", "a cookie", "a ball"
+];
+
+// Simple sentences for Say Along Game
+const sayAlongSentences = [
+  "Hello!",
+  "How are you?",
+  "I am happy.",
+  "Can I play?",
+  "Thank you.",
+  "I need help.",
+  "Let's be friends.",
+  "I like apples.",
+  "Good morning.",
+  "See you soon!"
 ];
 
 function showGameMenu() {
-  addChatBubble("Which game do you want to play? 1. Number Guessing 2. Animal Guessing 3. Image Guessing 4. I Want Game. Say the game name or number!", 'bot');
-  speakText("Which game do you want to play? Number guessing, animal guessing, image guessing, or I Want game? Say the game name or number!");
+  addChatBubble("Which game do you want to play? 1. Number Guessing 2. Animal Guessing 3. Image Guessing 4. I Want Game 5. Say Along Game. Say the game name or number!", 'bot');
+  speakText("Which game do you want to play? Number guessing, animal guessing, image guessing, I Want game, or Say Along game? Say the game name or number!");
   gameActive = { type: 'menu', state: null };
 }
 
@@ -257,15 +271,22 @@ function addImageChatBubble(imgSrc, caption) {
 
 function handleImageGameGuess(userText) {
   const guess = userText.trim().toLowerCase();
+  // Track number of tries
+  if (!gameActive.state.tries) gameActive.state.tries = 0;
+  gameActive.state.tries++;
+
   if (guess === gameActive.state.answer) {
     playYaySound();
     addChatBubble(`Great job! You guessed it right! It was a ${gameActive.state.answer}. 🎉 Do you want to play again? Say 'play'!`, 'bot');
     speakText(`Great job! You guessed it right! It was a ${gameActive.state.answer}. Do you want to play again? Say play!`);
     gameActive = { type: null, state: null };
+  } else if (gameActive.state.tries >= 3) {
+    addChatBubble(`That's okay! The answer is: ${gameActive.state.answer}. 🎉 Do you want to play again? Say 'play'!`, 'bot');
+    speakText(`That's okay! The answer is: ${gameActive.state.answer}. Do you want to play again? Say play!`);
+    gameActive = { type: null, state: null };
   } else {
     addChatBubble("Not quite! Try again. What is this a picture of?", 'bot');
     speakText("Not quite! Try again. What is this a picture of?");
-    // Optionally, show the image again
     addImageChatBubble(gameActive.state.src, "What is this a picture of?");
   }
 }
@@ -297,7 +318,31 @@ function handleIWantGameGuess(userText) {
   }
 }
 
-// Update botRespond to handle "I Want Game"
+function startSayAlongGame() {
+  const idx = Math.floor(Math.random() * sayAlongSentences.length);
+  const sentence = sayAlongSentences[idx];
+  gameActive = { type: 'sayalong', state: { sentence, tries: 0 } };
+  addChatBubble(`Let's play Say Along! Can you say: "${sentence}"`, 'bot');
+  speakText(`Let's play Say Along! Can you say: ${sentence}`);
+}
+
+function handleSayAlongGameGuess(userText) {
+  gameActive.state.tries++;
+  // Remove punctuation and extra spaces for comparison
+  const expected = gameActive.state.sentence.trim().toLowerCase().replace(/[.!?]$/, '');
+  const guess = userText.trim().toLowerCase().replace(/[.!?]$/, '');
+  if (guess === expected) {
+    playYaySound();
+    addChatBubble(`Great job! You said it! 🎉 Want to play again? Say 'play'!`, 'bot');
+    speakText(`Great job! You said it! Want to play again? Say play!`);
+    gameActive = { type: null, state: null };
+  } else {
+    addChatBubble(`Almost! Try saying: "${gameActive.state.sentence}"`, 'bot');
+    speakText(`Almost! Try saying: ${gameActive.state.sentence}`);
+  }
+}
+
+// Update botRespond to handle Say Along Game
 async function botRespond(userText) {
   clearInactivityTimer();
 
@@ -324,22 +369,30 @@ async function botRespond(userText) {
     handleIWantGameGuess(userText);
     return;
   }
+  if (gameActive.type === 'sayalong') {
+    handleSayAlongGameGuess(userText);
+    return;
+  }
   if (gameActive.type === 'menu') {
-    if (/\b(1|number)\b/i.test(userText)) {
+    const text = userText.trim().toLowerCase();
+    if (/\b(1|one|number)\b/.test(text)) {
       startNumberGame();
       return;
-    } else if (/\b(2|animal)\b/i.test(userText)) {
+    } else if (/\b(2|two|animal)\b/.test(text)) {
       startAnimalGame();
       return;
-    } else if (/\b(3|image)\b/i.test(userText)) {
+    } else if (/\b(3|three|image)\b/.test(text)) {
       startImageGame();
       return;
-    } else if (/\b(4|iwant|want)\b/i.test(userText)) {
+    } else if (/\b(4|four|iwant|want)\b/.test(text)) {
       startIWantGame();
       return;
+    } else if (/\b(5|five|sayalong|say)\b/.test(text)) {
+      startSayAlongGame();
+      return;
     } else {
-      addChatBubble("Please say 'number', 'animal', 'image', or 'I Want' to choose a game.", 'bot');
-      speakText("Please say number, animal, image, or I Want to choose a game.");
+      addChatBubble("Please say 'number', 'animal', 'image', 'I Want', or 'Say Along' to choose a game.", 'bot');
+      speakText("Please say number, animal, image, I Want, or Say Along to choose a game.");
       return;
     }
   }
